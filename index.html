@@ -9,8 +9,7 @@
   <meta name="author" content="Rebecca Greenblatt">
 
   
-  <meta name="description" content="&ldquo;Hello, World&rdquo;
-">
+  <meta name="description" content="SQL is a great tool, but for us Rubyists, it can sometimes be hard to grasp the concepts of querying a database. I&rsquo;ve decided to re-write a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -39,7 +38,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Rebecca Learns to Code</a></h1>
   
-    <h2>Too good not to share</h2>
+    <h2>Fun</h2>
   
 </hgroup>
 
@@ -66,6 +65,231 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/20/rake-new-post-title-goes-here/">SQL for Rubyists</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-20T14:28:32-04:00" pubdate data-updated="true">Jun 20<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>SQL is a great tool, but for us Rubyists, it can sometimes be hard to grasp the concepts of querying a database. I&rsquo;ve decided to re-write a couple of SQL queries in Ruby to remind myself of how the rows in a table correspond to an Object and its attributes.</p>
+
+<p>For this example, we&rsquo;ll be modeling a crowdfunding website; we have pledges, projects, and users.</p>
+
+<ul>
+<li>a User has a name</li>
+<li>a Project has a title, category, and funding goal</li>
+<li>a Pledge has an amount and belongs to both a user and a project</li>
+</ul>
+
+
+<p>If we were to imagine the database, each of these objects would have its own table.</p>
+
+<ul>
+<li>the &lsquo;users&rsquo; table would have an &lsquo;id&rsquo; and &lsquo;name&rsquo; column</li>
+<li>the &lsquo;projects&rsquo; table would have an &lsquo;id,&rsquo; &lsquo;title,&rsquo; &lsquo;category&rsquo; and &lsquo;funding goal&rsquo; column</li>
+<li>the &lsquo;pledges&rsquo; table would have an &lsquo;id&rsquo;, &lsquo;user_id&rsquo;, and &lsquo;project_id&rsquo; column</li>
+</ul>
+
+
+<p>For our Ruby &ldquo;queries&rdquo; I&rsquo;ve created an Object Class for User, Project, and Pledge with these same column headers as attributes for their respective classes.</p>
+
+<p>Now we are ready to start our queries! I will be writing my Ruby methods so that their output is identical to the SQLite output we would get if we ran the equivalent query in SQL.</p>
+
+<p><strong>Select the title of all projects and the total amount they have raised</strong></p>
+
+<p>SQL:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT projects.title, SUM(pledges.amount)
+</span><span class='line'>FROM projects JOIN pledges ON pledges.project_id = projects.id
+</span><span class='line'>GROUP BY projects.title"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">projects</span><span class="o">.</span><span class="n">collect</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span> <span class="c1">##GROUP BY</span>
+</span><span class='line'>  <span class="n">raised</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##WHERE</span>
+</span><span class='line'>      <span class="n">raised</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="o">[</span><span class="n">project</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">raised</span><span class="o">]</span> <span class="c1">##SELECT</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>OUTPUT</strong>:
+[[&ldquo;World&rsquo;s Best Book&rdquo;, 300], [&ldquo;World&rsquo;s Worst Book&rdquo;, 700], [&ldquo;Save The Whales&rdquo;, 1100], [&ldquo;Save The Rhinos&rdquo;, 500], [&ldquo;Save The Fish&rdquo;, 1000], [&ldquo;World&rsquo;s Best Album&rdquo;, 800], [&ldquo;World&rsquo;s Worst Album&rdquo;, 600]]</p>
+
+<p><strong>Select the title of all projects that have met their funding goal</strong></p>
+
+<p>SQL:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">SELECT</span> <span class="n">projects</span><span class="o">.</span><span class="n">title</span>
+</span><span class='line'><span class="no">FROM</span> <span class="n">projects</span> <span class="no">JOIN</span> <span class="n">pledges</span> <span class="no">ON</span> <span class="n">pledges</span><span class="o">.</span><span class="n">project_id</span> <span class="o">=</span> <span class="n">projects</span><span class="o">.</span><span class="n">id</span>
+</span><span class='line'><span class="no">GROUP</span> <span class="no">BY</span> <span class="n">projects</span><span class="o">.</span><span class="n">title</span>
+</span><span class='line'><span class="no">HAVING</span> <span class="no">SUM</span><span class="p">(</span><span class="n">pledges</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">projects</span><span class="o">.</span><span class="n">funding_goal</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">projects</span><span class="o">.</span><span class="n">collect</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span> <span class="c1">##GROUP BY</span>
+</span><span class='line'>  <span class="n">raised</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##ON</span>
+</span><span class='line'>      <span class="n">raised</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">raised</span> <span class="o">&gt;</span> <span class="n">project</span><span class="o">.</span><span class="n">funding_goal</span> <span class="c1">##HAVING</span>
+</span><span class='line'>    <span class="o">[</span><span class="n">project</span><span class="o">.</span><span class="n">title</span><span class="o">]</span> <span class="c1">##SELECT</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">.</span><span class="n">compact</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>OUTPUT</strong>:
+[[&ldquo;Save The Whales&rdquo;], [&ldquo;World&rsquo;s Best Album&rdquo;]]</p>
+
+<p><strong>Select the names of all users and the total amount they have pledged</strong></p>
+
+<p>SQL:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">SELECT</span> <span class="n">users</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="no">SUM</span><span class="p">(</span><span class="n">pledges</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span>
+</span><span class='line'><span class="no">FROM</span> <span class="n">users</span> <span class="no">JOIN</span> <span class="n">pledges</span> <span class="no">ON</span> <span class="n">pledges</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">users</span><span class="o">.</span><span class="n">id</span>
+</span><span class='line'><span class="no">GROUP</span> <span class="no">BY</span> <span class="n">users</span><span class="o">.</span><span class="n">name</span>
+</span><span class='line'><span class="no">ORDER</span> <span class="no">BY</span> <span class="no">SUM</span><span class="p">(</span><span class="n">pledges</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">users</span><span class="o">.</span><span class="n">collect</span> <span class="k">do</span> <span class="o">|</span><span class="n">user</span><span class="o">|</span> <span class="c1">##GROUP BY</span>
+</span><span class='line'>  <span class="n">pledged</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="c1">##ON</span>
+</span><span class='line'>      <span class="n">pledged</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="o">[</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pledged</span><span class="o">]</span> <span class="c1">##SELECT</span>
+</span><span class='line'><span class="k">end</span><span class="o">.</span><span class="n">sort_by</span><span class="p">{</span><span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">total_pledged</span><span class="o">|</span> <span class="n">total_pledged</span><span class="p">}</span> <span class="c1">##ORDER BY</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>OUTPUT</strong>:
+[[&ldquo;Matthew&rdquo;, 500], [&ldquo;Jonathan&rdquo;, 700], [&ldquo;Rebecca&rdquo;, 900], [&ldquo;Jordan&rdquo;, 1100], [&ldquo;Melissa&rdquo;, 1800]]</p>
+
+<p><strong>Selects the category name and the sum total of the pledge amounts of all the pledges in the book category</strong></p>
+
+<p>SQL:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">SELECT</span> <span class="n">projects</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="no">SUM</span><span class="p">(</span><span class="n">pledges</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span>
+</span><span class='line'><span class="no">FROM</span> <span class="n">projects</span> <span class="no">JOIN</span> <span class="n">pledges</span> <span class="no">ON</span> <span class="n">projects</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">pledges</span><span class="o">.</span><span class="n">project_id</span>
+</span><span class='line'><span class="no">WHERE</span> <span class="n">projects</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="s1">&#39;books&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="n">projects</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">project</span><span class="o">.</span><span class="n">category</span> <span class="o">==</span> <span class="s2">&quot;books&quot;</span> <span class="c1">##WHERE</span>
+</span><span class='line'>    <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##ON</span>
+</span><span class='line'>        <span class="n">total</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">[[</span><span class="s2">&quot;books&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">]]</span> <span class="c1">##SELECT</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>OUTPUT</strong>:
+[[&ldquo;books&rdquo;, 1800]]</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -114,6 +338,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/06/20/rake-new-post-title-goes-here/">SQL for Rubyists</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/06/03/my-first-post/">My First Post</a>
