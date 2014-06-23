@@ -71,7 +71,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/06/20/rake-new-post-title-goes-here/">SQL for Rubyists</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/06/20/sql-for-rubyists/">SQL for Rubyists</a></h1>
     
     
       <p class="meta">
@@ -144,7 +144,7 @@
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">projects</span><span class="o">.</span><span class="n">collect</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span> <span class="c1">##GROUP BY</span>
 </span><span class='line'>  <span class="n">raised</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span class='line'>  <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##WHERE</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##ON</span>
 </span><span class='line'>      <span class="n">raised</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
@@ -340,7 +340,7 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014/06/20/rake-new-post-title-goes-here/">SQL for Rubyists</a>
+        <a href="/blog/2014/06/20/sql-for-rubyists/">SQL for Rubyists</a>
       </li>
     
       <li class="post">

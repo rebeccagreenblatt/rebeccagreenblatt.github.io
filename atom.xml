@@ -4,7 +4,7 @@
   <title><![CDATA[Rebecca Learns to Code]]></title>
   <link href="http://rebeccagreenblatt.github.io/atom.xml" rel="self"/>
   <link href="http://rebeccagreenblatt.github.io/"/>
-  <updated>2014-06-22T21:17:46-04:00</updated>
+  <updated>2014-06-22T21:20:18-04:00</updated>
   <id>http://rebeccagreenblatt.github.io/</id>
   <author>
     <name><![CDATA[Rebecca Greenblatt]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[SQL for Rubyists]]></title>
-    <link href="http://rebeccagreenblatt.github.io/blog/2014/06/20/rake-new-post-title-goes-here/"/>
+    <link href="http://rebeccagreenblatt.github.io/blog/2014/06/20/sql-for-rubyists/"/>
     <updated>2014-06-20T14:28:32-04:00</updated>
-    <id>http://rebeccagreenblatt.github.io/blog/2014/06/20/rake-new-post-title-goes-here</id>
+    <id>http://rebeccagreenblatt.github.io/blog/2014/06/20/sql-for-rubyists</id>
     <content type="html"><![CDATA[<p>SQL is a great tool, but for us Rubyists, it can sometimes be hard to grasp the concepts of querying a database. I&rsquo;ve decided to re-write a couple of SQL queries in Ruby to remind myself of how the rows in a table correspond to an Object and its attributes.</p>
 
 <p>For this example, we&rsquo;ll be modeling a crowdfunding website; we have pledges, projects, and users.</p>
@@ -68,7 +68,7 @@
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">projects</span><span class="o">.</span><span class="n">collect</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span> <span class="c1">##GROUP BY</span>
 </span><span class='line'>  <span class="n">raised</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span class='line'>  <span class="n">pledges</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pledge</span><span class="o">|</span> <span class="c1">##JOIN</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##WHERE</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">pledge</span><span class="o">.</span><span class="n">project_id</span> <span class="o">==</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span> <span class="c1">##ON</span>
 </span><span class='line'>      <span class="n">raised</span> <span class="o">+=</span> <span class="n">pledge</span><span class="o">.</span><span class="n">amount</span> <span class="c1">##SUM</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
