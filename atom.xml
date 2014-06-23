@@ -4,7 +4,7 @@
   <title><![CDATA[Rebecca Learns to Code]]></title>
   <link href="http://rebeccagreenblatt.github.io/atom.xml" rel="self"/>
   <link href="http://rebeccagreenblatt.github.io/"/>
-  <updated>2014-06-22T21:20:18-04:00</updated>
+  <updated>2014-06-22T21:31:25-04:00</updated>
   <id>http://rebeccagreenblatt.github.io/</id>
   <author>
     <name><![CDATA[Rebecca Greenblatt]]></name>
@@ -51,7 +51,7 @@
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>SELECT projects.title, SUM(pledges.amount)
 </span><span class='line'>FROM projects JOIN pledges ON pledges.project_id = projects.id
-</span><span class='line'>GROUP BY projects.title"</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>GROUP BY projects.title</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Ruby:</p>
@@ -208,6 +208,10 @@
 
 <p><strong>OUTPUT</strong>:
 [[&ldquo;books&rdquo;, 1800]]</p>
+
+<p>Another, more sophisticated Object-oriented model would be one in which each object had an attribute that explained their relationship to the other. For example, each pledge instance would have a user attribute and a project attribute. Each user would have an array of pledges they have made, and each project would have an array of pledges that were made towards their funding goal.</p>
+
+<p>I hope this post helped you see SQL queries in a new way!</p>
 ]]></content>
   </entry>
   
