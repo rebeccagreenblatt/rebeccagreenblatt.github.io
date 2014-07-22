@@ -4,7 +4,7 @@
   <title><![CDATA[Rebecca Greenblatt]]></title>
   <link href="http://rebeccagreenblatt.github.io/atom.xml" rel="self"/>
   <link href="http://rebeccagreenblatt.github.io/"/>
-  <updated>2014-06-22T21:38:25-04:00</updated>
+  <updated>2014-07-21T23:17:11-04:00</updated>
   <id>http://rebeccagreenblatt.github.io/</id>
   <author>
     <name><![CDATA[Rebecca Greenblatt]]></name>
@@ -12,6 +12,213 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Javascript: Object Orientation]]></title>
+    <link href="http://rebeccagreenblatt.github.io/blog/2014/07/21/javascript-some-of-the-confusing-stuff/"/>
+    <updated>2014-07-21T19:24:18-04:00</updated>
+    <id>http://rebeccagreenblatt.github.io/blog/2014/07/21/javascript-some-of-the-confusing-stuff</id>
+    <content type="html"><![CDATA[<p>I&rsquo;m going to use this post to go through some of the things I find counterintuitive about Javascript&rsquo;s Object Orientated design. Note: I pretty much just took Jon Grover&rsquo;s slides and turned them into a blog post.</p>
+
+<p>I&rsquo;ll start with the fact that constructors are just functions. And if prototypes are just functions, then why do I need to use &ldquo;new&rdquo; before instantiating a new instance?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span> <span class="c1">// &quot;Rebecca&quot;</span>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">favorite_color</span><span class="p">;</span> <span class="c1">// &quot;blue&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From my understanding, the &ldquo;new&rdquo; tells us where to fill in the &ldquo;this&rdquo; references made in the constructor and also places the parent first in the prototype chain. So if I call a method on rebecca that has not been specified, the next place it will look is the Person constructor. This is why I am able to call both rebecca.name and rebecca.favorite_color, even though I did not specifically set rebecca&rsquo;s favorite color.</p>
+
+<p>Ok, next: what is the deal with private versus public methods? Let&rsquo;s say I wanted to add a method to the Person prototype&hellip;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">greeting</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;Nice to meet you&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">greeting</span><span class="p">();</span> <span class="c1">//TypeError: undefined is not a function</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I would not be able to call rebecca.greeting(); because this method would not be accessible to instances of Person. However, if we wrote it the following way, creating an instance method of &lsquo;this.greet,&rsquo; we could call greeting inside the constructor, and then it would be accessible by instances of Person through the instance method.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">greeting</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;Nice to meet you&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="k">return</span> <span class="nx">greeting</span><span class="p">()</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">greet</span><span class="p">();</span> <span class="c1">// &quot;Nice to meet you&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another way we could have done this without completely redefining the Person constructor, would be to stick with our original constructor, and add functionality for all of its instances by doing:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Person</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="k">return</span> <span class="s2">&quot;Nice to meet you&quot;</span><span class="p">;</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and then we would have been able to call rebecca.greet with no problem. I think about it as going inside the Person constructor, and then substituting prototype.greet with this.greet.</p>
+
+<p>One last oddity appears when dealing with the scope of &ldquo;this&rdquo; inside functions in a constructor. As an example, this would come into play if we wanted to incorporate the name of the instance in the greet method, and have rebecca.greet(); return &ldquo;Nice to meet you. My name is Rebecca.&rdquo; The following could would NOT work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">greeting</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;Nice to meet you. My name is &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="k">return</span> <span class="nx">greeting</span><span class="p">()</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">greet</span><span class="p">();</span> <span class="c1">//&quot;Nice to meet you. My name is .&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The problem here is that once we enter the greeting function, the scope of this is no longer an instance of the Person constructor. Somehow we need to capture the scope of &ldquo;this&rdquo; before we enter the function&hellip;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">greeting</span><span class="p">(){</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;Nice to meet you. My name is &quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="k">return</span> <span class="nx">greeting</span><span class="p">()</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">greet</span><span class="p">();</span> <span class="c1">//&quot;Nice to meet you. My name is Rebecca.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This method takes advantage of javascript&rsquo;s unique scoping properties. This would also work!</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">favorite_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">greet</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span> <span class="k">return</span> <span class="s2">&quot;Nice to meet you. My name is &quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">rebecca</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="s2">&quot;Rebecca&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">rebecca</span><span class="p">.</span><span class="nx">greet</span><span class="p">();</span> <span class="c1">//&quot;Nice to meet you. My name is Rebecca.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hope this post helped clear some things up about Javascript&rsquo;s prototype-based design.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Sorting Algorithms]]></title>
+    <link href="http://rebeccagreenblatt.github.io/blog/2014/07/08/sorting-algorithms/"/>
+    <updated>2014-07-08T20:33:08-04:00</updated>
+    <id>http://rebeccagreenblatt.github.io/blog/2014/07/08/sorting-algorithms</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SQL for Rubyists]]></title>
